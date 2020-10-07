@@ -2,16 +2,17 @@ package com.fitriasari.latvsga_aplikasi_validasilogin;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +21,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static com.fitriasari.latvsga_aplikasi_validasilogin.LoginActivity.FILENAME;
-
 public class MainActivity extends AppCompatActivity {
     EditText editUsername, editPassword, editEmail, editNamaLengkap, editAsalSekolah, editAlamat;
-    Button btnSimpan,btnmenu;
+    Button btnSimpan, toolbar;
     TextView textViewPassword;
 
     public static final String FILENAME = "login";
@@ -49,7 +48,22 @@ public class MainActivity extends AppCompatActivity {
         editAsalSekolah = findViewById(R.id.editAsalSekolah);
         editAlamat = findViewById(R.id.editAlamat);
         btnSimpan = findViewById(R.id.btnSimpan);
-        btnmenu = findViewById(R.id.btnmenu);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu dropDownMenu = new PopupMenu(getApplicationContext(),toolbar);
+                dropDownMenu.getMenuInflater().inflate(R.menu.dropdownmenu,dropDownMenu.getMenu());
+                dropDownMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        tampilkanDialogKonfirmasiLogout();
+                        return true;
+                    }
+                });
+                dropDownMenu.show();
+            }
+        });
 
         btnSimpan.setVisibility(View.GONE);
         editUsername.setEnabled(false);
@@ -115,26 +129,28 @@ public class MainActivity extends AppCompatActivity {
             editAlamat.setText(dataUser[5]);
 
         } else {
-            Toast.makeText(this, "User Tidak Ditemukan",
+            Toast.makeText(MainActivity.this, "User Tidak Ditemukan",
                     Toast.LENGTH_SHORT).show();
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.dropdownmenu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.menu_logout:
+//                tampilkanDialogKonfirmasiLogout();
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_logout:
-                tampilkanDialogKonfirmasiLogout();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     void hapusFile() {
         File file = new File(getFilesDir(), FILENAME);
@@ -144,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void tampilkanDialogKonfirmasiLogout() {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Logout")
                 .setMessage("Apakah Anda yakin ingin Logout?")
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -159,4 +175,5 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(android.R.string.no, null).show();
     }
+
 }
